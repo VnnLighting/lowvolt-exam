@@ -21,7 +21,7 @@
   /* ===== 按钮 ===== */
   .btn {
     border: none; border-radius: 8px; padding: 10px 24px;
-    font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
     font-family: inherit;
   }
   .btn:hover { opacity: 0.85; }
@@ -31,12 +31,12 @@
   .btn-warning { background: #f9e2af; color: #1e1e2e; }
   .btn-danger { background: #f38ba8; color: #1e1e2e; }
   .btn-secondary { background: #45475a; color: #cdd6f4; }
-  .btn-lg { padding: 14px 40px; font-size: 16px; border-radius: 10px; }
+  .btn-lg { padding: 14px 40px; font-size: 17px; border-radius: 10px; }
 
   /* ===== 首页 ===== */
   #home-view { justify-content: center; align-items: center; text-align: center; gap: 20px; }
-  #home-view h1 { font-size: 28px; color: #cdd6f4; }
-  #home-view .subtitle { color: #a6adc8; font-size: 14px; max-width: 420px; line-height: 1.7; }
+  #home-view h1 { font-size: 30px; color: #cdd6f4; }
+  #home-view .subtitle { color: #a6adc8; font-size: 15px; max-width: 420px; line-height: 1.7; }
 
   /* ===== 考试页布局 ===== */
   #exam-view { flex-direction: row; overflow: hidden; }
@@ -47,13 +47,13 @@
     border-right: 1px solid #313244; padding: 12px 10px;
     display: flex; flex-direction: column; overflow-y: auto;
   }
-  .answer-card-title { color: #a6adc8; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
-  .answer-card-stats { color: #6c7086; font-size: 10px; margin-bottom: 10px; }
+  .answer-card-title { color: #a6adc8; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .answer-card-stats { color: #6c7086; font-size: 11px; margin-bottom: 10px; }
   .grid { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 12px; }
   .grid-item {
     display: inline-flex; width: 22px; height: 22px;
     align-items: center; justify-content: center;
-    border-radius: 4px; font-size: 10px; font-weight: 600; cursor: pointer;
+    border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;
     background: #313244; color: #6c7086; border: 1px solid transparent;
     transition: transform 0.1s;
   }
@@ -62,29 +62,29 @@
   .grid-item.marked  { background: #f9e2af; color: #1e1e2e; }
   .grid-item.current  { border: 2px solid #89b4fa; color: #89b4fa; background: transparent; }
   .grid-item.marked-current { border: 2px solid #89b4fa; background: #f38ba8; color: #1e1e2e; }
-  .legend { font-size: 9px; color: #6c7086; line-height: 1.9; }
+  .legend { font-size: 10px; color: #6c7086; line-height: 1.9; }
 
   /* 右侧主区 */
   .exam-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   .exam-header {
     background: #181825; padding: 10px 20px;
     border-bottom: 1px solid #313244;
-    display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+    display: flex; justify-content: space-between; align-items: center; font-size: 14px;
     flex-shrink: 0;
   }
-  .exam-header .title { font-weight: 700; font-size: 15px; }
+  .exam-header .title { font-weight: 700; font-size: 16px; }
   .exam-body { flex: 1; padding: 24px 28px; overflow-y: auto; }
   .question-type {
     display: inline-block; background: #cba6f7; color: #1e1e2e;
-    padding: 2px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-bottom: 14px;
+    padding: 2px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;
   }
   .question-type.multi { background: #f2cdcd; }
   .question-type.judge { background: #94e2d5; }
-  .question-text { font-size: 15px; line-height: 1.8; margin-bottom: 22px; }
+  .question-text { font-size: 16px; line-height: 1.8; margin-bottom: 22px; }
   .options-list { display: flex; flex-direction: column; gap: 8px; }
   .option-item {
     border: 1px solid #45475a; border-radius: 8px;
-    padding: 12px 16px; font-size: 14px; cursor: pointer;
+    padding: 12px 16px; font-size: 15px; cursor: pointer;
     display: flex; align-items: flex-start; gap: 10px; transition: border-color 0.15s, background 0.15s;
     line-height: 1.5;
   }
@@ -95,7 +95,7 @@
   .option-letter {
     display: inline-flex; width: 26px; height: 26px;
     border-radius: 50%; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 12px; flex-shrink: 0;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
     background: #45475a; color: #cdd6f4; margin-top: 1px;
   }
   .option-item.selected .option-letter { background: #89b4fa; color: #1e1e2e; }
@@ -117,12 +117,12 @@
     background: #1e1e2e; border: 1px solid #45475a; border-radius: 12px;
     padding: 28px 32px; max-width: 380px; text-align: center;
   }
-  .modal h3 { margin-bottom: 12px; font-size: 18px; }
-  .modal .info { color: #a6adc8; font-size: 13px; margin-bottom: 20px; line-height: 1.7; }
+  .modal h3 { margin-bottom: 12px; font-size: 19px; }
+  .modal .info { color: #a6adc8; font-size: 14px; margin-bottom: 20px; line-height: 1.7; }
 
   /* ===== 评分页 ===== */
   .result-view { justify-content: center; align-items: center; text-align: center; gap: 14px; padding: 40px 20px; }
-  .result-view h2 { font-size: 22px; }
+  .result-view h2 { font-size: 24px; }
   .score-circle {
     width: 150px; height: 150px; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -130,8 +130,8 @@
   }
   .score-circle.fail { border-color: #f38ba8; }
   .score-value { font-size: 44px; font-weight: 800; line-height: 1; }
-  .score-suffix { font-size: 14px; color: #a6adc8; }
-  .stat-row { display: flex; gap: 28px; font-size: 14px; flex-wrap: wrap; justify-content: center; }
+  .score-suffix { font-size: 15px; color: #a6adc8; }
+  .stat-row { display: flex; gap: 28px; font-size: 15px; flex-wrap: wrap; justify-content: center; }
 
   /* ===== 错题回顾 ===== */
   .review-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
@@ -139,16 +139,20 @@
     background: #181825; border: 1px solid #313244; border-radius: 8px;
     padding: 16px; margin-bottom: 14px;
   }
-  .review-item .q-text { font-size: 14px; margin-bottom: 10px; line-height: 1.7; }
-  .review-item .your-answer { color: #f38ba8; font-size: 13px; margin-bottom: 4px; }
-  .review-item .correct-answer { color: #a6e3a1; font-size: 13px; }
-  .review-item .explanation { color: #a6adc8; font-size: 12px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #313244; line-height: 1.6; }
+  .review-item .q-text { font-size: 15px; margin-bottom: 10px; line-height: 1.7; }
+  .review-item .options-list { font-size: 14px; margin: 10px 0; line-height: 2; }
+  .review-item .opt-row { padding: 3px 10px; border-radius: 5px; margin: 3px 0; }
+  .review-item .opt-row.wrong-pick { background: rgba(243, 139, 168, 0.12); border-left: 3px solid #f38ba8; color: #f5c2d7; }
+  .review-item .opt-row.correct-pick { background: rgba(166, 227, 161, 0.12); border-left: 3px solid #a6e3a1; color: #c3f0c0; }
+  .review-item .opt-row.neutral { color: #6c7086; }
+  .review-item .opt-row .tag { font-size: 12px; opacity: 0.85; margin-left: 8px; }
+  .review-item .explanation { color: #a6adc8; font-size: 13px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #313244; line-height: 1.6; }
 
   .btn-row { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
   .hidden { display: none !important; }
 
   /* ===== 键盘提示 ===== */
-  .key-hint { font-size: 10px; color: #585b70; margin-top: 6px; }
+  .key-hint { font-size: 11px; color: #585b70; margin-top: 6px; }
 
   /* ===== 滚动条 ===== */
   ::-webkit-scrollbar { width: 5px; }
@@ -210,7 +214,7 @@
       <span>❌ 错误：<strong id="wrongCount">0</strong> 题</span>
       <span>📊 正确率：<strong id="accuracy">0%</strong></span>
     </div>
-    <div style="color:#a6adc8;font-size:13px;">⏱ 用时：<span id="totalTime">00:00:00</span></div>
+    <div style="color:#a6adc8;font-size:14px;">⏱ 用时：<span id="totalTime">00:00:00</span></div>
     <div class="btn-row">
       <button class="btn btn-secondary" id="btnReview" onclick="showReview()">查看错题</button>
       <button class="btn btn-primary" onclick="startExam()">再来一轮</button>
@@ -1684,9 +1688,11 @@ function renderExam() {
 // ============================================================================
 function selectOption(optIdx) {
   const q = examState.questions[examState.currentIndex];
-  if (q.type === 'single') {
+  if (q.type === 'single' || q.type === 'judge') {
+    // 单选 & 判断：点击即替换，只能选一个
     q.userAnswers = [optIdx];
   } else {
+    // 多选：点击切换勾选
     const pos = q.userAnswers.indexOf(optIdx);
     if (pos >= 0) q.userAnswers.splice(pos, 1);
     else q.userAnswers.push(optIdx);
@@ -1750,8 +1756,9 @@ function renderAnswerCard() {
     else if (isMarked) cls += ' marked';
     else if (isAnswered) cls += ' answered';
 
-    const label = isMarked && !isCurrent ? '🔖' : String(i + 1);
-    return `<span class="${cls}" onclick="jumpTo(${i})" title="第${i + 1}题${q.marked ? ' [已标记]' : ''}">${label}</span>`;
+    const label = String(i + 1);
+    const title = `第${i + 1}题${q.marked ? ' [已标记]' : ''}${isAnswered ? '' : ' [未答]'}`;
+    return `<span class="${cls}" onclick="jumpTo(${i})" title="${title}">${label}</span>`;
   }).join('');
 
   card.innerHTML = `
@@ -1820,7 +1827,7 @@ function submitExam() {
   document.getElementById('totalTime').textContent = formatTime(examState.elapsed);
 
   const circle = document.getElementById('scoreCircle');
-  circle.classList.toggle('fail', accuracy < 60);
+  circle.classList.toggle('fail', accuracy < 80);
 
   const btnReview = document.getElementById('btnReview');
   if (wrongCount === 0) {
@@ -1843,21 +1850,43 @@ function showReview() {
   const body = document.getElementById('reviewBody');
 
   if (wrong.length === 0) {
-    body.innerHTML = '<div style="text-align:center;padding:60px;color:#a6adc8;font-size:15px;">🎉 全部正确，没有错题！</div>';
+    body.innerHTML = '<div style="text-align:center;padding:60px;color:#a6adc8;font-size:16px;">🎉 全部正确，没有错题！</div>';
     showView('review');
     return;
   }
 
   body.innerHTML = wrong.map((q, i) => {
-    const yourAns = q.userAnswers.length > 0
-      ? q.userAnswers.map(idx => letters[idx]).join('、')
-      : '未作答';
-    const correctAns = q.answer.map(idx => letters[idx]).join('、');
+    const userSet = new Set(q.userAnswers);
+    const answerSet = new Set(q.answer);
+    const userPickedNone = q.userAnswers.length === 0;
+
+    const optionsHtml = q.options.map((opt, idx) => {
+      const isUserPick = userSet.has(idx);
+      const isCorrect = answerSet.has(idx);
+      let cls = 'neutral';
+      let tag = '';
+      if (isUserPick && isCorrect) {
+        cls = 'correct-pick';
+        tag = '✅ 你的选择（正确）';
+      } else if (isUserPick && !isCorrect) {
+        cls = 'wrong-pick';
+        tag = '❌ 你的选择';
+      } else if (!isUserPick && isCorrect) {
+        cls = 'correct-pick';
+        tag = '✅ 正确答案';
+      }
+      return `<div class="opt-row ${cls}">${letters[idx]}: ${opt}${tag ? `<span class="tag">${tag}</span>` : ''}</div>`;
+    }).join('');
+
+    const extraLine = userPickedNone
+      ? '<div style="color:#f38ba8;font-size:14px;margin-bottom:6px;">⚠️ 未作答</div>'
+      : '';
+
     const exp = q.explanation ? `<div class="explanation">💡 ${q.explanation}</div>` : '';
     return `<div class="review-item">
       <div class="q-text"><strong>${i + 1}.</strong> ${q.question}</div>
-      <div class="your-answer">❌ 你的答案：${yourAns}</div>
-      <div class="correct-answer">✅ 正确答案：${correctAns}</div>
+      <div class="options-list">${optionsHtml}</div>
+      ${extraLine}
       ${exp}
     </div>`;
   }).join('');
