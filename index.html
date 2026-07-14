@@ -158,6 +158,119 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #45475a; border-radius: 10px; }
+
+  /* ========================================================================
+     移动端 / 响应式  (≤768px)
+     ======================================================================== */
+  @media (max-width: 768px) {
+    /* 基础容器 —— 去掉固定高度，允许页面自然滚动 */
+    body { align-items: flex-start; }
+    .app { max-width: 100%; height: auto; min-height: 100dvh; }
+
+    /* ---------- 首页 ---------- */
+    #home-view { padding: 48px 20px 32px; gap: 16px; }
+    #home-view h1 { font-size: 22px; }
+    #home-view .subtitle { font-size: 13px; max-width: 100%; }
+    .key-hint { display: none; }  /* 手机无实体键盘 */
+
+    /* ---------- 考试页：左右布局 → 上下布局 ---------- */
+    #exam-view { flex-direction: column; }
+
+    /* 答题卡：收窄为顶部横条 */
+    .answer-card {
+      width: 100%; min-width: unset; flex-shrink: 0;
+      flex-direction: row; flex-wrap: wrap; align-items: center;
+      padding: 6px 10px; gap: 4px 8px;
+      border-right: none; border-bottom: 1px solid #313244;
+      overflow: hidden;
+    }
+    .answer-card-title { font-size: 11px; margin-bottom: 0; white-space: nowrap; }
+    .answer-card-stats { font-size: 10px; margin-bottom: 0; white-space: nowrap; }
+    /* 题号网格：单行横向滚动 */
+    .grid {
+      flex-basis: 100%; flex-wrap: nowrap; overflow-x: auto;
+      margin-bottom: 0; gap: 2px; padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .grid-item {
+      width: 18px; height: 18px; font-size: 10px; flex-shrink: 0;
+    }
+    .legend { display: none; }
+
+    /* 题目主体 */
+    .exam-main { flex: 1; min-height: 0; }
+
+    /* 考试顶栏 */
+    .exam-header {
+      padding: 6px 10px; font-size: 11px; gap: 4px;
+      flex-wrap: wrap; justify-content: space-between;
+    }
+    .exam-header .title { font-size: 12px; }
+
+    /* 题目区域 */
+    .exam-body { padding: 14px 14px; }
+    .question-type { font-size: 11px; padding: 2px 10px; margin-bottom: 10px; }
+    .question-text { font-size: 14px; line-height: 1.75; margin-bottom: 16px; }
+    .options-list { gap: 6px; }
+    .option-item {
+      padding: 12px 12px; font-size: 14px; min-height: 44px; /* 触控友好 */
+      gap: 8px; align-items: center;
+    }
+    .option-letter { width: 24px; height: 24px; font-size: 12px; }
+
+    /* 考试底栏 —— 两行布局 */
+    .exam-footer {
+      padding: 6px 8px; gap: 5px; flex-wrap: wrap;
+    }
+    .exam-footer .btn {
+      padding: 8px 0; font-size: 13px; border-radius: 7px;
+      flex: 1 1 calc(50% - 5px); min-width: 0; text-align: center;
+      white-space: nowrap;
+    }
+    .exam-footer .btn-danger { flex: 1 1 100%; } /* 交卷独占一行 */
+
+    /* ---------- 弹窗 ---------- */
+    .modal {
+      max-width: calc(100vw - 32px); margin: 0 16px;
+      padding: 22px 20px;
+    }
+    .modal h3 { font-size: 17px; }
+    .modal .info { font-size: 13px; }
+
+    /* ---------- 评分页 ---------- */
+    .result-view { padding: 32px 16px; gap: 10px; }
+    .result-view h2 { font-size: 20px; }
+    .score-circle { width: 120px; height: 120px; border-width: 4px; }
+    .score-value { font-size: 36px; }
+    .score-suffix { font-size: 13px; }
+    .stat-row { gap: 16px; font-size: 14px; }
+
+    /* ---------- 错题回顾 ---------- */
+    #review-view .exam-header { padding: 6px 10px; }
+    .review-body { padding: 10px 10px; }
+    .review-item { padding: 12px; margin-bottom: 10px; }
+    .review-item .q-text { font-size: 14px; }
+
+    /* ---------- 按钮行 ---------- */
+    .btn-row { gap: 8px; }
+    .btn-row .btn { padding: 10px 16px; font-size: 14px; }
+
+    /* ---------- 滚动条收窄 ---------- */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+  }
+
+  /* ========================================================================
+     小屏手机额外微调  (≤400px)
+     ======================================================================== */
+  @media (max-width: 400px) {
+    #home-view h1 { font-size: 20px; }
+    .exam-header { font-size: 10px; }
+    .exam-header .title { font-size: 11px; }
+    .question-text { font-size: 13px; }
+    .option-item { font-size: 13px; padding: 10px 10px; }
+    .exam-footer .btn { font-size: 12px; padding: 7px 0; }
+    .grid-item { width: 16px; height: 16px; font-size: 9px; }
+  }
 </style>
 </head>
 <body>
