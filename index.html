@@ -6,271 +6,439 @@
 <title>低压电工证 · 模拟考试</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ========================================================================
+     ⚡ CYBERPUNK THEME — Mobile-First
+     配色：深空底 + 霓虹青 / 紫 / 綠 / 粉
+     ======================================================================== */
+  :root {
+    --bg-deep: #050510;
+    --bg-main: #0a0a1a;
+    --bg-card: #0d0d25;
+    --bg-elevated: #121235;
+    --border: #1a2a48;
+    --border-glow: rgba(0, 229, 255, 0.15);
+    --neon-cyan: #00e5ff;
+    --neon-green: #00ff41;
+    --neon-yellow: #ffe500;
+    --neon-pink: #ff006e;
+    --neon-purple: #b400ff;
+    --neon-orange: #ff6d00;
+    --text-primary: #d0d0f0;
+    --text-secondary: #8899bb;
+    --text-muted: #506080;
+    --shadow-cyan: 0 0 12px rgba(0, 229, 255, 0.25);
+    --shadow-green: 0 0 12px rgba(0, 255, 65, 0.25);
+    --shadow-pink: 0 0 12px rgba(255, 0, 110, 0.25);
+    --glow-cyan: 0 0 24px rgba(0, 229, 255, 0.35), 0 0 48px rgba(0, 229, 255, 0.1);
+    --glow-green: 0 0 24px rgba(0, 255, 65, 0.35), 0 0 48px rgba(0, 255, 65, 0.1);
+    --glow-pink: 0 0 24px rgba(255, 0, 110, 0.35), 0 0 48px rgba(255, 0, 110, 0.1);
+    --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
+  }
+
   body {
     font-family: system-ui, -apple-system, "Microsoft YaHei", sans-serif;
-    background: #1e1e2e; color: #cdd6f4;
-    min-height: 100vh; display: flex; justify-content: center; align-items: center;
+    background: var(--bg-main); color: var(--text-primary);
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; justify-content: center; align-items: flex-start;
     user-select: none; -webkit-user-select: none;
+    position: relative; overflow-x: hidden;
   }
-  .app { width: 100%; max-width: 960px; height: 100vh; display: flex; flex-direction: column; }
+  /* 掃描線疊層 */
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 5px
+    );
+  }
 
-  /* ===== 视图容器 ===== */
+  .app {
+    width: 100%; max-width: 100%; height: auto; min-height: 100dvh;
+    display: flex; flex-direction: column; position: relative; z-index: 1;
+  }
+
+  /* ===== 視圖容器 ===== */
   .view { display: none; flex: 1; }
   .view.active { display: flex; flex-direction: column; }
 
-  /* ===== 按钮 ===== */
+  /* ===== 按鈕 ===== */
   .btn {
-    border: none; border-radius: 8px; padding: 10px 24px;
-    font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
-    font-family: inherit;
+    border: 1px solid var(--border); border-radius: 8px; padding: 10px 24px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s ease; font-family: inherit;
+    position: relative; overflow: hidden; letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.03); color: var(--text-secondary);
   }
-  .btn:hover { opacity: 0.85; }
+  .btn:hover { transform: translateY(-1px); }
   .btn:active { transform: scale(0.97); }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-  .btn-primary { background: #89b4fa; color: #1e1e2e; }
-  .btn-warning { background: #f9e2af; color: #1e1e2e; }
-  .btn-danger { background: #f38ba8; color: #1e1e2e; }
-  .btn-secondary { background: #45475a; color: #cdd6f4; }
-  .btn-lg { padding: 14px 40px; font-size: 17px; border-radius: 10px; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-  /* ===== 首页 ===== */
-  #home-view { justify-content: center; align-items: center; text-align: center; gap: 20px; }
-  #home-view h1 { font-size: 30px; color: #cdd6f4; }
-  #home-view .subtitle { color: #a6adc8; font-size: 15px; max-width: 420px; line-height: 1.7; }
+  .btn-primary {
+    background: rgba(0, 229, 255, 0.08); color: var(--neon-cyan);
+    border-color: rgba(0, 229, 255, 0.25); box-shadow: var(--shadow-cyan);
+  }
+  .btn-primary:hover { background: rgba(0, 229, 255, 0.15); box-shadow: var(--glow-cyan); color: #fff; }
 
-  /* ===== 考试页布局 ===== */
-  #exam-view { flex-direction: row; overflow: hidden; }
+  .btn-success {
+    background: rgba(0, 255, 65, 0.08); color: var(--neon-green);
+    border-color: rgba(0, 255, 65, 0.25); box-shadow: var(--shadow-green);
+  }
+  .btn-success:hover { background: rgba(0, 255, 65, 0.15); box-shadow: var(--glow-green); color: #fff; }
 
-  /* 答题卡 */
+  .btn-warning {
+    background: rgba(255, 229, 0, 0.08); color: var(--neon-yellow);
+    border-color: rgba(255, 229, 0, 0.25); box-shadow: 0 0 12px rgba(255, 229, 0, 0.2);
+  }
+  .btn-warning:hover { background: rgba(255, 229, 0, 0.15); box-shadow: 0 0 24px rgba(255, 229, 0, 0.35); }
+
+  .btn-danger {
+    background: rgba(255, 0, 110, 0.08); color: var(--neon-pink);
+    border-color: rgba(255, 0, 110, 0.25); box-shadow: var(--shadow-pink);
+  }
+  .btn-danger:hover { background: rgba(255, 0, 110, 0.15); box-shadow: var(--glow-pink); color: #fff; }
+
+  .btn-purple {
+    background: rgba(180, 0, 255, 0.08); color: var(--neon-purple);
+    border-color: rgba(180, 0, 255, 0.25); box-shadow: 0 0 12px rgba(180, 0, 255, 0.2);
+  }
+  .btn-purple:hover { background: rgba(180, 0, 255, 0.15); box-shadow: 0 0 24px rgba(180, 0, 255, 0.35); }
+
+  .btn-secondary {
+    background: rgba(80, 96, 128, 0.12); color: var(--text-secondary);
+    border-color: rgba(80, 96, 128, 0.2);
+  }
+  .btn-secondary:hover { background: rgba(80, 96, 128, 0.25); color: var(--text-primary); }
+
+  .btn-lg { padding: 14px 40px; font-size: 17px; border-radius: 10px; text-transform: uppercase; letter-spacing: 2px; }
+  .btn-sm { padding: 6px 16px; font-size: 12px; border-radius: 6px; }
+  .btn-icon { padding: 8px 12px; font-size: 16px; }
+
+  /* ===== 首頁（手機端默認）===== */
+  #home-view { justify-content: center; align-items: center; text-align: center; gap: 16px; padding: 48px 20px 32px; }
+  #home-view h1 {
+    font-size: 22px; color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.1);
+    letter-spacing: 1px;
+  }
+  #home-view .subtitle { color: var(--text-secondary); font-size: 13px; max-width: 100%; line-height: 1.7; }
+
+  /* ========================================================================
+     考試頁 — 手機端默認（上下堆疊）
+     ======================================================================== */
+  #exam-view { flex-direction: column; overflow: hidden; }
+
+  /* 答題卡：頂部橫條 */
   .answer-card {
-    width: 120px; min-width: 120px; background: #181825;
-    border-right: 1px solid #313244; padding: 12px 10px;
-    display: flex; flex-direction: column; overflow-y: auto;
+    width: 100%; min-width: unset; flex-shrink: 0; background: var(--bg-card);
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    padding: 6px 10px; gap: 4px 8px;
+    border-right: none; border-bottom: 1px solid var(--border);
+    display: flex; overflow: hidden;
   }
-  .answer-card-title { color: #a6adc8; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
-  .answer-card-stats { color: #6c7086; font-size: 11px; margin-bottom: 10px; }
-  .grid { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 12px; }
+  .answer-card-title { color: var(--text-secondary); font-size: 11px; font-weight: 600; margin-bottom: 0; white-space: nowrap; }
+  .answer-card-stats { color: var(--text-muted); font-size: 10px; margin-bottom: 0; white-space: nowrap; }
+  .grid {
+    flex-basis: 100%; display: flex; flex-wrap: nowrap; overflow-x: auto;
+    margin-bottom: 0; gap: 2px; padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+  }
   .grid-item {
-    display: inline-flex; width: 22px; height: 22px;
+    display: inline-flex; width: 18px; height: 18px; flex-shrink: 0;
     align-items: center; justify-content: center;
-    border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;
-    background: #313244; color: #6c7086; border: 1px solid transparent;
-    transition: transform 0.1s;
+    border-radius: 3px; font-size: 10px; font-weight: 600; cursor: pointer;
+    background: rgba(255,255,255,0.05); color: var(--text-muted);
+    border: 1px solid transparent; transition: all 0.15s ease;
   }
-  .grid-item:hover { transform: scale(1.15); }
-  .grid-item.answered { background: #a6e3a1; color: #1e1e2e; }
-  .grid-item.marked  { background: #f9e2af; color: #1e1e2e; }
-  .grid-item.current  { border: 2px solid #89b4fa; color: #89b4fa; background: transparent; }
-  .grid-item.marked-current { border: 2px solid #89b4fa; background: #f38ba8; color: #1e1e2e; }
-  .legend { font-size: 10px; color: #6c7086; line-height: 1.9; }
+  .grid-item:hover { transform: scale(1.2); border-color: var(--neon-cyan); }
+  .grid-item.answered { background: rgba(0, 255, 65, 0.2); color: var(--neon-green); border-color: rgba(0, 255, 65, 0.4); }
+  .grid-item.marked  { background: rgba(255, 229, 0, 0.2); color: var(--neon-yellow); border-color: rgba(255, 229, 0, 0.4); }
+  .grid-item.current  { border: 2px solid var(--neon-cyan); color: var(--neon-cyan); background: transparent; box-shadow: var(--shadow-cyan); }
+  .grid-item.marked-current { border: 2px solid var(--neon-cyan); background: rgba(255, 0, 110, 0.3); color: #fff; box-shadow: var(--shadow-pink); }
+  .legend { display: none; }
 
-  /* 右侧主区 */
-  .exam-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  /* 題目主區 */
+  .exam-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
   .exam-header {
-    background: #181825; padding: 10px 20px;
-    border-bottom: 1px solid #313244;
-    display: flex; justify-content: space-between; align-items: center; font-size: 14px;
-    flex-shrink: 0;
+    background: var(--bg-card); padding: 6px 10px; font-size: 11px; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    flex-shrink: 0; color: var(--text-secondary);
   }
-  .exam-header .title { font-weight: 700; font-size: 16px; }
-  .exam-body { flex: 1; padding: 24px 28px; overflow-y: auto; }
+  .exam-header .title { font-weight: 700; font-size: 12px; color: var(--neon-cyan); letter-spacing: 0.5px; }
+  .exam-body { flex: 1; padding: 14px 14px; overflow-y: auto; }
   .question-type {
-    display: inline-block; background: #cba6f7; color: #1e1e2e;
-    padding: 2px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;
+    display: inline-block; background: rgba(180, 0, 255, 0.2); color: var(--neon-purple);
+    padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-bottom: 10px;
+    border: 1px solid rgba(180, 0, 255, 0.3); letter-spacing: 1px; text-transform: uppercase;
   }
-  .question-type.multi { background: #f2cdcd; }
-  .question-type.judge { background: #94e2d5; }
-  .question-text { font-size: 16px; line-height: 1.8; margin-bottom: 22px; }
-  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  .question-type.multi { background: rgba(255, 0, 110, 0.15); color: var(--neon-pink); border-color: rgba(255, 0, 110, 0.3); }
+  .question-type.judge { background: rgba(0, 229, 255, 0.12); color: var(--neon-cyan); border-color: rgba(0, 229, 255, 0.25); }
+  .question-text { font-size: 14px; line-height: 1.75; margin-bottom: 16px; }
+  .options-list { display: flex; flex-direction: column; gap: 6px; }
   .option-item {
-    border: 1px solid #45475a; border-radius: 8px;
-    padding: 12px 16px; font-size: 15px; cursor: pointer;
-    display: flex; align-items: flex-start; gap: 10px; transition: border-color 0.15s, background 0.15s;
-    line-height: 1.5;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 12px; font-size: 14px; min-height: 44px;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: all 0.2s ease; line-height: 1.5;
+    background: rgba(255,255,255,0.02);
   }
-  .option-item:hover { border-color: #6c7086; }
+  .option-item:hover { border-color: var(--neon-cyan); background: rgba(0, 229, 255, 0.04); }
   .option-item.selected {
-    border-color: #89b4fa; background: rgba(137,180,250,0.08); color: #89b4fa;
+    border-color: var(--neon-cyan); background: rgba(0, 229, 255, 0.08);
+    color: var(--neon-cyan); box-shadow: var(--shadow-cyan);
   }
   .option-letter {
-    display: inline-flex; width: 26px; height: 26px;
+    display: inline-flex; width: 24px; height: 24px;
     border-radius: 50%; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 13px; flex-shrink: 0;
-    background: #45475a; color: #cdd6f4; margin-top: 1px;
+    font-weight: 700; font-size: 12px; flex-shrink: 0;
+    background: rgba(255,255,255,0.06); color: var(--text-secondary);
   }
-  .option-item.selected .option-letter { background: #89b4fa; color: #1e1e2e; }
+  .option-item.selected .option-letter { background: rgba(0, 229, 255, 0.2); color: var(--neon-cyan); box-shadow: var(--shadow-cyan); }
   .option-letter.square { border-radius: 6px; }
 
+  /* 底欄按鈕：兩行網格 */
   .exam-footer {
-    border-top: 1px solid #313244; padding: 10px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-    background: #181825; flex-shrink: 0;
+    border-top: 1px solid var(--border); padding: 6px 8px; gap: 5px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    background: var(--bg-card); flex-shrink: 0;
   }
+  .exam-footer .btn {
+    padding: 8px 0; font-size: 13px; border-radius: 7px;
+    flex: 1 1 calc(50% - 5px); min-width: 0; text-align: center; white-space: nowrap;
+  }
+  .exam-footer .btn-danger { flex: 1 1 100%; }
 
-  /* ===== 弹窗 ===== */
+  /* ===== 彈窗 ===== */
   .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-    z-index: 10; justify-content: center; align-items: center;
+    display: none; position: fixed; inset: 0; background: rgba(5,5,16,0.85); backdrop-filter: blur(4px);
+    z-index: 100; justify-content: center; align-items: center;
   }
   .modal-overlay.active { display: flex; }
   .modal {
-    background: #1e1e2e; border: 1px solid #45475a; border-radius: 12px;
-    padding: 28px 32px; max-width: 380px; text-align: center;
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 20px; max-width: calc(100vw - 32px); margin: 0 16px;
+    text-align: center; box-shadow: var(--glow-cyan);
   }
-  .modal h3 { margin-bottom: 12px; font-size: 19px; }
-  .modal .info { color: #a6adc8; font-size: 14px; margin-bottom: 20px; line-height: 1.7; }
+  .modal h3 { margin-bottom: 12px; font-size: 17px; color: var(--neon-cyan); }
+  .modal .info { color: var(--text-secondary); font-size: 13px; margin-bottom: 20px; line-height: 1.7; }
 
-  /* ===== 评分页 ===== */
-  .result-view { justify-content: center; align-items: center; text-align: center; gap: 14px; padding: 40px 20px; }
-  .result-view h2 { font-size: 24px; }
+  /* ===== 評分頁 ===== */
+  .result-view { justify-content: center; align-items: center; text-align: center; gap: 10px; padding: 32px 16px; }
+  .result-view h2 { font-size: 20px; color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
   .score-circle {
-    width: 150px; height: 150px; border-radius: 50%;
+    width: 120px; height: 120px; border-radius: 50%; border-width: 4px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border: 5px solid #a6e3a1; margin-bottom: 4px;
+    border: 4px solid var(--neon-green); margin-bottom: 4px;
+    box-shadow: var(--glow-green); transition: all 0.5s ease;
   }
-  .score-circle.fail { border-color: #f38ba8; }
-  .score-value { font-size: 44px; font-weight: 800; line-height: 1; }
-  .score-suffix { font-size: 15px; color: #a6adc8; }
-  .stat-row { display: flex; gap: 28px; font-size: 15px; flex-wrap: wrap; justify-content: center; }
+  .score-circle.fail { border-color: var(--neon-pink); box-shadow: var(--glow-pink); }
+  .score-value { font-size: 36px; font-weight: 800; line-height: 1; font-family: var(--font-mono); }
+  .score-suffix { font-size: 13px; color: var(--text-secondary); }
+  .stat-row { display: flex; gap: 16px; font-size: 14px; flex-wrap: wrap; justify-content: center; }
+  .stat-row strong { color: var(--neon-cyan); }
 
-  /* ===== 错题回顾 ===== */
-  .review-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+  /* ===== 錯題回顧 ===== */
+  .review-body { flex: 1; overflow-y: auto; padding: 10px 10px; }
   .review-item {
-    background: #181825; border: 1px solid #313244; border-radius: 8px;
-    padding: 16px; margin-bottom: 14px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; margin-bottom: 10px;
   }
-  .review-item .q-text { font-size: 15px; margin-bottom: 10px; line-height: 1.7; }
-  .review-item .options-list { font-size: 14px; margin: 10px 0; line-height: 2; }
+  .review-item .q-text { font-size: 14px; margin-bottom: 10px; line-height: 1.7; }
+  .review-item .options-list { font-size: 13px; margin: 8px 0; line-height: 2; }
   .review-item .opt-row { padding: 3px 10px; border-radius: 5px; margin: 3px 0; }
-  .review-item .opt-row.wrong-pick { background: rgba(243, 139, 168, 0.12); border-left: 3px solid #f38ba8; color: #f5c2d7; }
-  .review-item .opt-row.correct-pick { background: rgba(166, 227, 161, 0.12); border-left: 3px solid #a6e3a1; color: #c3f0c0; }
-  .review-item .opt-row.neutral { color: #6c7086; }
-  .review-item .opt-row .tag { font-size: 12px; opacity: 0.85; margin-left: 8px; }
-  .review-item .explanation { color: #a6adc8; font-size: 13px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #313244; line-height: 1.6; }
+  .review-item .opt-row.wrong-pick { background: rgba(255, 0, 110, 0.1); border-left: 3px solid var(--neon-pink); color: #f5a0c0; }
+  .review-item .opt-row.correct-pick { background: rgba(0, 255, 65, 0.1); border-left: 3px solid var(--neon-green); color: #a0f0b0; }
+  .review-item .opt-row.neutral { color: var(--text-muted); }
+  .review-item .opt-row .tag { font-size: 11px; opacity: 0.85; margin-left: 8px; }
+  .review-item .explanation { color: var(--text-secondary); font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); line-height: 1.6; }
+  .review-item .fc-add-row { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); text-align: right; }
 
-  .btn-row { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  /* ===== 閃卡複習頁 ===== */
+  #flashcard-view { background: var(--bg-main); }
+  .fc-header {
+    background: var(--bg-card); padding: 8px 14px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+  }
+  .fc-header .title { font-size: 14px; font-weight: 700; color: var(--neon-purple); }
+  .fc-header .stats { font-size: 12px; color: var(--text-secondary); }
+  .fc-container {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 20px 16px; perspective: 1000px;
+  }
+  .flashcard {
+    width: 100%; max-width: 400px; min-height: 240px;
+    position: relative; cursor: pointer;
+    transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-front, .fc-back {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 14px; padding: 24px 20px;
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border);
+    overflow-y: auto;
+  }
+  .fc-front {
+    background: var(--bg-card); justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 0 30px rgba(180, 0, 255, 0.1);
+  }
+  .fc-back {
+    background: var(--bg-elevated); transform: rotateY(180deg);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.1);
+  }
+  .fc-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--neon-purple); margin-bottom: 16px;
+  }
+  .fc-back .fc-label { color: var(--neon-cyan); }
+  .fc-question { font-size: 16px; line-height: 1.8; color: var(--text-primary); }
+  .fc-answer { font-size: 16px; font-weight: 700; color: var(--neon-green); margin-bottom: 12px; }
+  .fc-explanation { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .fc-type-badge {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 8px;
+    background: rgba(180, 0, 255, 0.15); color: var(--neon-purple); margin-bottom: 12px;
+  }
+  .fc-hint { font-size: 11px; color: var(--text-muted); margin-top: 16px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+  .fc-actions {
+    display: flex; gap: 10px; padding: 10px 16px; justify-content: center;
+    border-top: 1px solid var(--border); background: var(--bg-card); flex-shrink: 0;
+  }
+  .fc-actions .btn { flex: 1; max-width: 160px; }
+  .fc-progress {
+    text-align: center; padding: 8px; font-size: 12px; color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+  .fc-empty {
+    text-align: center; padding: 60px 20px; color: var(--text-secondary);
+  }
+  .fc-empty .icon { font-size: 48px; margin-bottom: 16px; }
+  .fc-deck-info {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; margin-top: 4px; text-align: left; max-width: 320px;
+  }
+  .fc-deck-info .deck-stat { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+  .fc-deck-info .deck-stat span:first-child { color: var(--text-secondary); }
+  .fc-deck-info .deck-stat span:last-child { color: var(--neon-cyan); font-weight: 600; }
+
+  .btn-row { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  .btn-row .btn { padding: 10px 16px; font-size: 14px; }
   .hidden { display: none !important; }
 
-  /* ===== 键盘提示 ===== */
-  .key-hint { font-size: 11px; color: #585b70; margin-top: 6px; }
+  /* ===== 鍵盤提示 ===== */
+  .key-hint { display: none; }  /* 手機無實體鍵盤 */
 
-  /* ===== 滚动条 ===== */
-  ::-webkit-scrollbar { width: 5px; }
+  /* ===== 滾動條 ===== */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #45475a; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
   /* ========================================================================
-     移动端 / 响应式  (≤768px)
+     桌面端覆寫  (≥769px)
      ======================================================================== */
-  @media (max-width: 768px) {
-    /* 基础容器 —— 去掉固定高度，允许页面自然滚动 */
-    body { align-items: flex-start; }
-    .app { max-width: 100%; height: auto; min-height: 100dvh; }
+  @media (min-width: 769px) {
+    body { align-items: center; }
+    .app { max-width: 960px; height: 100vh; min-height: auto; }
 
-    /* ---------- 首页 ---------- */
-    #home-view { padding: 48px 20px 32px; gap: 16px; }
-    #home-view h1 { font-size: 22px; }
-    #home-view .subtitle { font-size: 13px; max-width: 100%; }
-    .key-hint { display: none; }  /* 手机无实体键盘 */
+    /* 首頁 */
+    #home-view { padding: 0; gap: 24px; }
+    #home-view h1 { font-size: 32px; }
+    #home-view .subtitle { font-size: 15px; max-width: 480px; }
+    .key-hint { display: block; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+    .fc-deck-info { max-width: 400px; }
 
-    /* ---------- 考试页：左右布局 → 上下布局 ---------- */
-    #exam-view { flex-direction: column; }
+    /* 考試頁：上下 → 左右 */
+    #exam-view { flex-direction: row; }
 
-    /* 答题卡：收窄为顶部横条 */
+    /* 答題卡：頂部橫條 → 左側豎欄 */
     .answer-card {
-      width: 100%; min-width: unset; flex-shrink: 0;
-      flex-direction: row; flex-wrap: wrap; align-items: center;
-      padding: 6px 10px; gap: 4px 8px;
-      border-right: none; border-bottom: 1px solid #313244;
-      overflow: hidden;
+      width: 130px; min-width: 130px; flex-shrink: 1;
+      flex-direction: column; flex-wrap: nowrap; align-items: stretch;
+      padding: 14px 12px; gap: 0;
+      border-right: 1px solid var(--border); border-bottom: none;
+      overflow-y: auto; overflow-x: hidden;
     }
-    .answer-card-title { font-size: 11px; margin-bottom: 0; white-space: nowrap; }
-    .answer-card-stats { font-size: 10px; margin-bottom: 0; white-space: nowrap; }
-    /* 题号网格：单行横向滚动 */
+    .answer-card-title { font-size: 13px; margin-bottom: 6px; white-space: normal; }
+    .answer-card-stats { font-size: 11px; margin-bottom: 10px; white-space: normal; }
     .grid {
-      flex-basis: 100%; flex-wrap: nowrap; overflow-x: auto;
-      margin-bottom: 0; gap: 2px; padding-bottom: 2px;
-      -webkit-overflow-scrolling: touch;
+      flex-wrap: wrap; overflow-x: visible; flex-basis: auto;
+      margin-bottom: 12px; gap: 3px; padding-bottom: 0;
     }
-    .grid-item {
-      width: 18px; height: 18px; font-size: 10px; flex-shrink: 0;
+    .grid-item { width: 24px; height: 24px; font-size: 11px; flex-shrink: 1; }
+    .legend {
+      display: block; font-size: 10px; color: var(--text-muted); line-height: 2;
+      border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;
     }
-    .legend { display: none; }
 
-    /* 题目主体 */
-    .exam-main { flex: 1; min-height: 0; }
+    /* 題目區域 */
+    .exam-main { min-height: auto; }
+    .exam-header { padding: 10px 20px; font-size: 14px; flex-wrap: nowrap; }
+    .exam-header .title { font-size: 16px; }
+    .exam-body { padding: 24px 28px; }
+    .question-type { font-size: 12px; padding: 2px 12px; margin-bottom: 14px; }
+    .question-text { font-size: 16px; line-height: 1.8; margin-bottom: 22px; }
+    .options-list { gap: 8px; }
+    .option-item { padding: 12px 16px; font-size: 15px; min-height: auto; align-items: flex-start; }
+    .option-letter { width: 26px; height: 26px; font-size: 13px; }
 
-    /* 考试顶栏 */
-    .exam-header {
-      padding: 6px 10px; font-size: 11px; gap: 4px;
-      flex-wrap: wrap; justify-content: space-between;
-    }
-    .exam-header .title { font-size: 12px; }
-
-    /* 题目区域 */
-    .exam-body { padding: 14px 14px; }
-    .question-type { font-size: 11px; padding: 2px 10px; margin-bottom: 10px; }
-    .question-text { font-size: 14px; line-height: 1.75; margin-bottom: 16px; }
-    .options-list { gap: 6px; }
-    .option-item {
-      padding: 12px 12px; font-size: 14px; min-height: 44px; /* 触控友好 */
-      gap: 8px; align-items: center;
-    }
-    .option-letter { width: 24px; height: 24px; font-size: 12px; }
-
-    /* 考试底栏 —— 两行布局 */
-    .exam-footer {
-      padding: 6px 8px; gap: 5px; flex-wrap: wrap;
-    }
+    /* 底欄 */
+    .exam-footer { padding: 10px 20px; flex-wrap: nowrap; }
     .exam-footer .btn {
-      padding: 8px 0; font-size: 13px; border-radius: 7px;
-      flex: 1 1 calc(50% - 5px); min-width: 0; text-align: center;
-      white-space: nowrap;
+      flex: none; padding: 10px 24px; font-size: 15px; border-radius: 8px;
+      min-width: auto; text-align: auto; white-space: auto;
     }
-    .exam-footer .btn-danger { flex: 1 1 100%; } /* 交卷独占一行 */
+    .exam-footer .btn-danger { flex: none; }
 
-    /* ---------- 弹窗 ---------- */
-    .modal {
-      max-width: calc(100vw - 32px); margin: 0 16px;
-      padding: 22px 20px;
-    }
-    .modal h3 { font-size: 17px; }
-    .modal .info { font-size: 13px; }
+    /* 彈窗 */
+    .modal { padding: 28px 32px; max-width: 400px; }
+    .modal h3 { font-size: 19px; }
+    .modal .info { font-size: 14px; }
 
-    /* ---------- 评分页 ---------- */
-    .result-view { padding: 32px 16px; gap: 10px; }
-    .result-view h2 { font-size: 20px; }
-    .score-circle { width: 120px; height: 120px; border-width: 4px; }
-    .score-value { font-size: 36px; }
-    .score-suffix { font-size: 13px; }
-    .stat-row { gap: 16px; font-size: 14px; }
+    /* 評分 */
+    .result-view { padding: 40px 20px; gap: 14px; }
+    .result-view h2 { font-size: 24px; }
+    .score-circle { width: 150px; height: 150px; border-width: 5px; }
+    .score-value { font-size: 44px; }
+    .score-suffix { font-size: 15px; }
+    .stat-row { gap: 28px; font-size: 15px; }
 
-    /* ---------- 错题回顾 ---------- */
-    #review-view .exam-header { padding: 6px 10px; }
-    .review-body { padding: 10px 10px; }
-    .review-item { padding: 12px; margin-bottom: 10px; }
-    .review-item .q-text { font-size: 14px; }
+    /* 錯題 */
+    .review-body { padding: 20px 24px; }
+    .review-item { padding: 16px; margin-bottom: 14px; }
+    .review-item .q-text { font-size: 15px; }
 
-    /* ---------- 按钮行 ---------- */
-    .btn-row { gap: 8px; }
-    .btn-row .btn { padding: 10px 16px; font-size: 14px; }
+    /* 閃卡 */
+    .fc-header { padding: 10px 20px; }
+    .fc-header .title { font-size: 16px; }
+    .fc-container { padding: 32px 24px; }
+    .flashcard { max-width: 500px; min-height: 280px; }
+    .fc-front, .fc-back { padding: 32px 28px; }
+    .fc-question { font-size: 18px; }
 
-    /* ---------- 滚动条收窄 ---------- */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    /* 按鈕行 */
+    .btn-row { gap: 12px; }
+    .btn-row .btn { padding: 10px 24px; font-size: 15px; }
+
+    /* 滾動條 */
+    ::-webkit-scrollbar { width: 5px; height: auto; }
   }
 
   /* ========================================================================
-     小屏手机额外微调  (≤400px)
+     小屏手機微調  (≤400px)
      ======================================================================== */
   @media (max-width: 400px) {
-    #home-view h1 { font-size: 20px; }
+    #home-view h1 { font-size: 19px; }
     .exam-header { font-size: 10px; }
     .exam-header .title { font-size: 11px; }
     .question-text { font-size: 13px; }
     .option-item { font-size: 13px; padding: 10px 10px; }
     .exam-footer .btn { font-size: 12px; padding: 7px 0; }
     .grid-item { width: 16px; height: 16px; font-size: 9px; }
+    .flashcard { min-height: 200px; }
+    .fc-question { font-size: 14px; }
   }
+
 </style>
 </head>
 <body>
@@ -280,7 +448,11 @@
   <div id="home-view" class="view active">
     <h1>⚡ 低压电工证 · 模拟考试</h1>
     <p class="subtitle">随机抽题，计时答题，交卷自动评分，错题即时回顾。<br>反复练习，轻松通过机考。</p>
-    <button class="btn btn-primary btn-lg" onclick="startExam()">开始考试</button>
+    <button class="btn btn-primary btn-lg" onclick="startExam()">▶ 开始考试</button>
+    <div class="fc-deck-info hidden" id="homeDeckInfo">
+      <div class="deck-stat"><span>📚 閃卡牌組</span><span id="homeDeckCount">0 張</span></div>
+    </div>
+    <button class="btn btn-purple btn-lg hidden" id="btnFlashcardHome" onclick="startFlashcardReview()">🃏 閃卡複習</button>
     <p class="key-hint">考试中可用键盘：A~H 选择 · ← → 翻题 · M 标记</p>
   </div>
 
@@ -344,8 +516,23 @@
     <div class="review-body" id="reviewBody"></div>
     <div class="exam-footer">
       <button class="btn btn-secondary" onclick="showView('home')">← 返回首页</button>
+      <button class="btn btn-purple" onclick="addAllWrongToFlashcards()">🃏 全部加入閃卡</button>
       <span></span>
       <button class="btn btn-primary" onclick="startExam()">再来一轮</button>
+    </div>
+  </div>
+
+  <!-- ========== 閃卡複習頁 ========== -->
+  <div id="flashcard-view" class="view">
+    <div class="fc-header">
+      <span class="title">🃏 閃卡複習</span>
+      <span class="stats" id="fcStats">載入中...</span>
+    </div>
+    <div class="fc-container" id="fcContainer"></div>
+    <div class="fc-progress" id="fcProgress"></div>
+    <div class="fc-actions" id="fcActions">
+      <button class="btn btn-danger" onclick="markFlashcard(false)">❌ 還不熟</button>
+      <button class="btn btn-success" onclick="markFlashcard(true)">✅ 會了</button>
     </div>
   </div>
 
@@ -1662,6 +1849,48 @@ const QUESTION_BANK = [
 // ============================================================================
 let examState = null;
 let timerInterval = null;
+let flashcardState = null;  // { cards, currentIndex, isFlipped, knownIds, learningIds }
+
+// ============================================================================
+//  localStorage 工具
+// ============================================================================
+const LS_FLASHCARDS = 'lowvolt_flashcards';
+const LS_HISTORY = 'lowvolt_exam_history';
+
+function getFlashcards() {
+  try { return JSON.parse(localStorage.getItem(LS_FLASHCARDS) || '[]'); }
+  catch(e) { return []; }
+}
+function saveFlashcards(cards) {
+  try { localStorage.setItem(LS_FLASHCARDS, JSON.stringify(cards)); }
+  catch(e) { /* quota exceeded, silently fail */ }
+}
+function getExamHistory() {
+  try { return JSON.parse(localStorage.getItem(LS_HISTORY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveExamResult(result) {
+  try {
+    const history = getExamHistory();
+    history.push(result);
+    if (history.length > 50) history.splice(0, history.length - 50);  // keep last 50
+    localStorage.setItem(LS_HISTORY, JSON.stringify(history));
+  } catch(e) { /* ignore */ }
+}
+function updateHomeDeckUI() {
+  const cards = getFlashcards();
+  const info = document.getElementById('homeDeckInfo');
+  const btn = document.getElementById('btnFlashcardHome');
+  const count = document.getElementById('homeDeckCount');
+  if (cards.length > 0) {
+    info.classList.remove('hidden');
+    btn.classList.remove('hidden');
+    count.textContent = cards.length + ' 張';
+  } else {
+    info.classList.add('hidden');
+    btn.classList.add('hidden');
+  }
+}
 
 // ============================================================================
 //  工具函数
@@ -1687,9 +1916,10 @@ function formatTime(seconds) {
 // ============================================================================
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const viewMap = { home: 'home-view', exam: 'exam-view', result: 'result-view', review: 'review-view' };
+  const viewMap = { home: 'home-view', exam: 'exam-view', result: 'result-view', review: 'review-view', flashcard: 'flashcard-view' };
   const el = document.getElementById(viewMap[name]);
   if (el) el.classList.add('active');
+  if (name === 'home') updateHomeDeckUI();
 }
 
 // ============================================================================
@@ -1949,7 +2179,15 @@ function submitExam() {
     btnReview.classList.remove('hidden');
   }
 
+  // 保存成績記錄
+  saveExamResult({
+    date: new Date().toISOString(),
+    score: correct, total, accuracy, elapsed: examState.elapsed,
+    wrongIds: wrongQuestions.map(q => q.id)
+  });
+
   showView('result');
+  updateHomeDeckUI();
 }
 
 // ============================================================================
@@ -1963,15 +2201,19 @@ function showReview() {
   const body = document.getElementById('reviewBody');
 
   if (wrong.length === 0) {
-    body.innerHTML = '<div style="text-align:center;padding:60px;color:#a6adc8;font-size:16px;">🎉 全部正确，没有错题！</div>';
+    body.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-secondary);font-size:16px;">🎉 全部正确，没有错题！</div>';
     showView('review');
     return;
   }
+
+  const existingCards = getFlashcards();
+  const existingIds = new Set(existingCards.map(c => c.id));
 
   body.innerHTML = wrong.map((q, i) => {
     const userSet = new Set(q.userAnswers);
     const answerSet = new Set(q.answer);
     const userPickedNone = q.userAnswers.length === 0;
+    const alreadyInDeck = existingIds.has(q.id);
 
     const optionsHtml = q.options.map((opt, idx) => {
       const isUserPick = userSet.has(idx);
@@ -1992,15 +2234,19 @@ function showReview() {
     }).join('');
 
     const extraLine = userPickedNone
-      ? '<div style="color:#f38ba8;font-size:14px;margin-bottom:6px;">⚠️ 未作答</div>'
+      ? '<div style="color:var(--neon-pink);font-size:14px;margin-bottom:6px;">⚠️ 未作答</div>'
       : '';
 
     const exp = q.explanation ? `<div class="explanation">💡 ${q.explanation}</div>` : '';
-    return `<div class="review-item">
+    const fcBtn = alreadyInDeck
+      ? '<button class="btn btn-sm btn-secondary" disabled>✅ 已加入閃卡</button>'
+      : `<button class="btn btn-sm btn-purple" onclick="addSingleToFlashcards(${q.id})">➕ 加入閃卡</button>`;
+    return `<div class="review-item" id="reviewItem${q.id}">
       <div class="q-text"><strong>${i + 1}.</strong> ${q.question}</div>
       <div class="options-list">${optionsHtml}</div>
       ${extraLine}
       ${exp}
+      <div class="fc-add-row">${fcBtn}</div>
     </div>`;
   }).join('');
 
@@ -2037,6 +2283,128 @@ document.addEventListener('keydown', (e) => {
     case 'm': case 'M': e.preventDefault(); toggleMark(); break;
   }
 });
+// ============================================================================
+//  閃卡牌組管理
+// ============================================================================
+function addSingleToFlashcards(qId) {
+  const q = examState.wrongQuestions.find(w => w.id === qId);
+  if (!q) return;
+  const cards = getFlashcards();
+  if (cards.some(c => c.id === qId)) return;
+  cards.push({
+    id: q.id, type: q.type, question: q.question,
+    options: q.options, answer: q.answer, explanation: q.explanation || ''
+  });
+  saveFlashcards(cards);
+  var btn = document.querySelector('#reviewItem' + qId + ' .fc-add-row button');
+  if (btn) { btn.textContent = '✅ 已加入閃卡'; btn.className = 'btn btn-sm btn-secondary'; btn.disabled = true; }
+  updateHomeDeckUI();
+}
+
+function addAllWrongToFlashcards() {
+  const wrong = examState.wrongQuestions;
+  if (!wrong || wrong.length === 0) return;
+  const cards = getFlashcards();
+  const existingIds = new Set(cards.map(c => c.id));
+  let added = 0;
+  wrong.forEach(q => {
+    if (!existingIds.has(q.id)) {
+      cards.push({
+        id: q.id, type: q.type, question: q.question,
+        options: q.options, answer: q.answer, explanation: q.explanation || ''
+      });
+      existingIds.add(q.id);
+      added++;
+    }
+  });
+  if (added > 0) { saveFlashcards(cards); showReview(); }
+  updateHomeDeckUI();
+}
+
+// ============================================================================
+//  閃卡複習
+// ============================================================================
+function startFlashcardReview() {
+  const cards = getFlashcards();
+  if (cards.length === 0) {
+    alert('閃卡牌組為空！請先在錯題回顧中加入題目。');
+    return;
+  }
+  flashcardState = {
+    cards: shuffle(cards),
+    currentIndex: 0,
+    isFlipped: false,
+    knownIds: [],
+    learningIds: []
+  };
+  showView('flashcard');
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  const st = flashcardState;
+  if (!st || st.cards.length === 0) {
+    document.getElementById('fcContainer').innerHTML = '<div class="fc-empty"><div class="icon">🃏</div><p>牌組為空</p><button class="btn btn-primary" onclick="showView(\'home\')">返回首頁</button></div>';
+    document.getElementById('fcActions').classList.add('hidden');
+    document.getElementById('fcProgress').textContent = '';
+    document.getElementById('fcStats').textContent = '0 張';
+    return;
+  }
+  if (st.currentIndex >= st.cards.length) {
+    const total = st.cards.length;
+    const known = st.knownIds.length;
+    document.getElementById('fcContainer').innerHTML = '<div class="fc-empty"><div class="icon">🎉</div><p style="font-size:18px;color:var(--neon-cyan);">複習完成！</p><p style="color:var(--text-secondary);margin-top:8px;">✅ 熟練 ' + known + ' 題 &nbsp;|&nbsp; 📝 待加強 ' + (total - known) + ' 題</p><div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"><button class="btn btn-primary" onclick="startFlashcardReview()">🔄 再來一輪</button><button class="btn btn-secondary" onclick="showView(\'home\')">🏠 返回首頁</button></div></div>';
+    document.getElementById('fcActions').classList.add('hidden');
+    document.getElementById('fcProgress').textContent = '';
+    document.getElementById('fcStats').textContent = '✅ ' + known + ' / ' + total;
+    return;
+  }
+  document.getElementById('fcActions').classList.remove('hidden');
+  st.isFlipped = false;
+  const card = st.cards[st.currentIndex];
+  const total = st.cards.length;
+  let typeLabel = card.type === 'multi' ? '多選題' : card.type === 'judge' ? '判斷題' : '單選題';
+  document.getElementById('fcStats').textContent = '📋 ' + (st.currentIndex + 1) + ' / ' + total + '  |  ✅' + st.knownIds.length + '  📝' + st.learningIds.length;
+  document.getElementById('fcProgress').textContent = '⬅ 點擊卡片翻轉查看答案 ➡';
+  const correctAnswer = card.answer.map(function(a) { return String.fromCharCode(65 + a); }).join(', ');
+  const optionsPreview = card.options ? card.options.map(function(o, i) { return String.fromCharCode(65 + i) + '. ' + o; }).join('<br>') : '';
+  document.getElementById('fcContainer').innerHTML = '<div class="flashcard" id="fcCard" onclick="flipCard()"><div class="fc-front"><span class="fc-type-badge">' + typeLabel + '</span><span class="fc-label">📝 問題</span><p class="fc-question">' + card.question + '</p>' + (optionsPreview ? '<div style="font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.8;text-align:left;">' + optionsPreview + '</div>' : '') + '<p class="fc-hint">👆 點擊翻轉</p></div><div class="fc-back"><span class="fc-label">✅ 正確答案</span><p class="fc-answer">' + correctAnswer + '</p>' + (card.explanation ? '<p class="fc-explanation">💡 ' + card.explanation + '</p>' : '') + '</div></div>';
+}
+
+function flipCard() {
+  if (!flashcardState) return;
+  const card = document.getElementById('fcCard');
+  if (!card) return;
+  flashcardState.isFlipped = !flashcardState.isFlipped;
+  if (flashcardState.isFlipped) {
+    card.classList.add('flipped');
+    document.getElementById('fcProgress').textContent = '👆 選擇是否已掌握';
+  } else {
+    card.classList.remove('flipped');
+    document.getElementById('fcProgress').textContent = '⬅ 點擊卡片翻轉查看答案 ➡';
+  }
+}
+
+function markFlashcard(known) {
+  if (!flashcardState) return;
+  const st = flashcardState;
+  const cardId = st.cards[st.currentIndex].id;
+  if (known) {
+    if (st.knownIds.indexOf(cardId) === -1) st.knownIds.push(cardId);
+    st.learningIds = st.learningIds.filter(function(id) { return id !== cardId; });
+  } else {
+    if (st.learningIds.indexOf(cardId) === -1) st.learningIds.push(cardId);
+    st.knownIds = st.knownIds.filter(function(id) { return id !== cardId; });
+  }
+  st.currentIndex++;
+  st.isFlipped = false;
+  renderFlashcard();
+}
+
+// ============================================================================
+//  初始化
+// ============================================================================
+updateHomeDeckUI();
 </script>
 
 </body>
