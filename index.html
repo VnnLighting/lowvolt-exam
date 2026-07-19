@@ -438,72 +438,20 @@
     .flashcard { min-height: 200px; }
     .fc-question { font-size: 14px; }
   /* ========================================================================
-     Y2K GRUNGE MEME STICKERS — 浮動貼圖層
-     復古網絡美學：🦋💀✨♡🎀🔮🕸️🍒
+     PIXEL GIRL SCREENSAVER — 像素萌妹屏保浮窗
+     Windows 經典彈跳屏保風格，canvas 渲染
      ======================================================================== */
-  #sticker-layer {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  #screensaver-canvas {
+    position: fixed; inset: 0; pointer-events: none; z-index: 2;
+    width: 100%; height: 100%;
   }
-  .y2k-sticker {
-    position: absolute; font-size: 28px; opacity: 0; will-change: transform;
-    user-select: none; -webkit-user-select: none;
-    filter: drop-shadow(0 0 6px var(--glow, rgba(255,255,255,0.4)));
-  }
-  /* 飄浮上升 */
-  @keyframes y2k-rise {
-    0%   { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-    8%   { opacity: var(--op, 0.55); }
-    85%  { opacity: var(--op, 0.55); }
-    100% { transform: translateY(-110vh) rotate(var(--rot, 20deg)) scale(0.3); opacity: 0; }
-  }
-  /* 波浪漂移 */
-  @keyframes y2k-drift {
-    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-    5%   { opacity: var(--op, 0.5); }
-    25%  { transform: translate(calc(var(--dx) * 0.5), -25vh) rotate(90deg); }
-    50%  { transform: translate(var(--dx), -50vh) rotate(180deg); }
-    75%  { transform: translate(calc(var(--dx) * 0.5), -75vh) rotate(270deg); }
-    95%  { opacity: var(--op, 0.5); }
-    100% { transform: translate(0, -105vh) rotate(360deg); opacity: 0; }
-  }
-  /* 彈跳 */
-  @keyframes y2k-bounce {
-    0%   { transform: translateY(0) scale(1); opacity: 0; }
-    5%   { opacity: var(--op, 0.5); }
-    10%  { transform: translateY(-20px) scale(1.15); }
-    20%  { transform: translateY(0) scale(0.9); }
-    30%  { transform: translateY(-12px) scale(1.08); }
-    40%  { transform: translateY(0) scale(0.95); }
-    50%  { transform: translateY(-6px) scale(1.03); }
-    60%  { transform: translateY(0) scale(1); }
-    100% { transform: translateY(0) scale(1); opacity: var(--op, 0.5); }
-  }
-  /* 旋轉閃現 */
-  @keyframes y2k-spin-pop {
-    0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
-    30%  { transform: scale(1.3) rotate(20deg); opacity: var(--op, 0.7); }
-    50%  { transform: scale(0.85) rotate(-10deg); opacity: var(--op, 0.7); }
-    70%  { transform: scale(1.05) rotate(5deg); opacity: var(--op, 0.55); }
-    85%  { opacity: var(--op, 0.3); }
-    100% { transform: scale(0) rotate(180deg); opacity: 0; }
-  }
-  /* 閃爍堆疊 */
-  @keyframes y2k-glitch {
-    0%   { transform: translate(0, 0) skew(0deg); opacity: 0; }
-    10%  { opacity: var(--op, 0.6); }
-    20%  { transform: translate(-4px, -20vh) skew(-5deg); }
-    40%  { transform: translate(6px, -40vh) skew(8deg); }
-    55%  { transform: translate(-2px, -55vh) skew(-3deg); }
-    70%  { transform: translate(8px, -70vh) skew(-6deg); }
-    90%  { opacity: var(--op, 0.5); }
-    100% { transform: translate(0, -105vh) skew(0deg); opacity: 0; }
-  }
+
 
 </style>
 </head>
 <body>
-<!-- Y2K Grunge 貼圖層 -->
-<div id="sticker-layer" aria-hidden="true"></div>
+<!-- 像素萌妹屏保浮窗 -->
+<canvas id="screensaver-canvas" aria-hidden="true"></canvas>
 
 <div class="app">
 
@@ -2470,154 +2418,186 @@ function markFlashcard(known) {
 }
 
 // ============================================================================
-//  Y2K GRUNGE 貼圖引擎
+//  PIXEL GIRL SCREENSAVER — 像素萌妹屏保引擎
+//  Windows 經典彈跳風格 · Canvas 渲染 · 零外部依賴
 // ============================================================================
-// ========================================================================
-//  GOTHIC Y2K GRUNGE 貼圖素材池 — 軟魅惑哥特美學
-//  混合 emoji + 內聯 SVG，霓虹粉/紫/紅色調
-// ========================================================================
 
-// --- Emoji 池：哥特軟魅惑 ---
-const GOTH_EMOJIS = [
-  '🥀','💀','🖤','🔮','🕸️','🕷️','🌙','💋','⛓️','🎀',
-  '🩻','💜','🪦','🩸','👁️','🕯️','🪞','🧿','🌑','💄',
-  '🗡️','🫧','✞','♱','🦴','🪬','🕊️','💢','🎱','📿'
+// --- 像素角色定義（12×14 像素網格）---
+// 色碼: 0=透明 1=膚色 2=髮主色 3=瞳孔 4=腮紅 5=嘴唇 6=髮深色 7=眼白 8=髮亮色 9=配件
+
+var PIXEL_GIRLS = [
+  // 0: 貓娘 Neko — 粉髮貓耳
+  { name:'neko', palette:{ skin:'#FFD5C0', hair:'#FF88AA', eye:'#3A1A28', blush:'#FF8899', mouth:'#EE5566', hairDk:'#DD6688', eyeW:'#FFFFFF', hairLt:'#FFAACC', acc:'#FFDD44' },
+    data:['000220022000','002222222200','022226622220','022222222220','021114411220','221711711122','221131441122','221113331122','221114411122','221115551122','022111111220','002211112200','000222222000','000022220000'] },
+
+  // 1: 兔娘 Bunny — 白兔耳粉髮
+  { name:'bunny', palette:{ skin:'#FFD5C0', hair:'#FF99BB', eye:'#3A1A28', blush:'#FF8899', mouth:'#EE5566', hairDk:'#EE7799', eyeW:'#FFFFFF', hairLt:'#FFBBDD', acc:'#FFFFFF' },
+    data:['007700007700','007777777700','002222222200','022228822220','022222222220','021114411220','221711711122','221131441122','221113331122','221114411122','221115551122','022111111220','002222222200','000022220000'] },
+
+  // 2: 小惡魔 Devil — 紫髮角
+  { name:'devil', palette:{ skin:'#FFD8C8', hair:'#BB88EE', eye:'#3A1A30', blush:'#FF8899', mouth:'#EE5566', hairDk:'#9966CC', eyeW:'#FFFFFF', hairLt:'#DDBBFF', acc:'#DD88AA' },
+    data:['009900009900','009900009900','002222222200','022226622220','022222222220','021114411220','221711711122','221131331122','221113331122','221114411122','221115551122','022111111220','002222222200','000022220000'] },
+
+  // 3: 女僕 Maid — 黑髮白頭飾
+  { name:'maid', palette:{ skin:'#FFD8C8', hair:'#4A3040', eye:'#2A1020', blush:'#FF8899', mouth:'#EE5566', hairDk:'#3A2030', eyeW:'#FFFFFF', hairLt:'#6A5060', acc:'#FFFFFF' },
+    data:['007777777700','007777777700','002222222200','022226622220','022222222220','021114411220','221711711122','221131441122','221113331122','221114411122','221115551122','022111111220','002222222200','000022220000'] },
+
+  // 4: 雙馬尾 Twintail — 粉髮
+  { name:'twintail', palette:{ skin:'#FFD5C0', hair:'#FF8899', eye:'#3A1A28', blush:'#FF7788', mouth:'#EE5566', hairDk:'#DD6677', eyeW:'#FFFFFF', hairLt:'#FFAABB', acc:'#FFCCDD' },
+    data:['220000002200','222200222200','022228822220','022222222220','021114411220','221711711122','221131441122','221113331122','221114411122','221115551122','022111111220','002211112200','000222222000','000022220000'] },
+
+  // 5: 嬌羞娘 Blush — 棕髮重腮紅
+  { name:'blush', palette:{ skin:'#FFE0D0', hair:'#8B5E3C', eye:'#2A1020', blush:'#FF6677', mouth:'#EE6677', hairDk:'#6B4030', eyeW:'#FFFFFF', hairLt:'#A07050', acc:'#FF8899' },
+    data:['000222222000','002222222200','022228822220','022222222220','021114411220','221711711122','221131441122','221113331122','221144441122','221115551122','022111111220','002211112200','000222222000','000022220000'] }
 ];
 
-// --- 內聯 SVG 哥特貼圖（純向量，零外部依賴）---
-const GOTH_SVGS = [
-  // 1. 哥特之心 — 裂痕暗黑心
-  '<svg viewBox="0 0 64 64" width="64" height="64"><defs><filter id="glow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M32 56C18 44 4 34 4 20C4 10 12 4 20 4C26 4 30 8 32 12C34 8 38 4 44 4C52 4 60 10 60 20C60 34 46 44 32 56Z" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow)"/><line x1="22" y1="28" x2="42" y2="20" stroke="currentColor" stroke-width="1" opacity="0.5"/><line x1="24" y1="36" x2="38" y2="30" stroke="currentColor" stroke-width="0.7" opacity="0.3"/></svg>',
+var PXL_W = 12, PXL_H = 14; // 像素網格尺寸
+var GIRL_SCALE = 4;         // 放大倍數（顯示尺寸 = PXL_W*SCALE ≈ 48px）
 
-  // 2. 哥特十字架 ✞
-  '<svg viewBox="0 0 48 64" width="48" height="64"><defs><filter id="glow2"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="18" y="0" width="12" height="38" rx="3" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow2)"/><rect x="4" y="12" width="40" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow2)"/><circle cx="24" cy="19" r="2" fill="currentColor" opacity="0.6"/></svg>',
+// --- Canvas 屏保引擎 ---
+var scrCanvas = null;
+var scrCtx = null;
+var scrSprites = [];   // { x, y, vx, vy, girlIdx, w, h, offCanvas }
+var scrAnimId = null;
+var scrRunning = false;
 
-  // 3. 暗黑星 — 五芒星變體
-  '<svg viewBox="0 0 60 60" width="60" height="60"><defs><filter id="glow3"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><polygon points="30,2 38,24 60,24 42,38 48,58 30,46 12,58 18,38 0,24 22,24" fill="none" stroke="currentColor" stroke-width="1.8" filter="url(#glow3)"/><circle cx="30" cy="30" r="5" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>',
-
-  // 4. 蝙蝠剪影 🦇
-  '<svg viewBox="0 0 64 40" width="64" height="40"><defs><filter id="glow4"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M32 8C32 8 26 0 16 4C10 6 6 14 2 18C0 16 0 20 4 22C8 20 12 14 16 12C20 14 24 18 32 20C40 18 44 14 48 12C52 14 56 20 60 22C64 20 64 16 62 18C58 14 54 6 48 4C38 0 32 8 32 8Z" fill="none" stroke="currentColor" stroke-width="1.5" filter="url(#glow4)"/></svg>',
-
-  // 5. 鎖鏈 ⛓️
-  '<svg viewBox="0 0 48 56" width="40" height="48"><defs><filter id="glow5"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="24" cy="10" rx="10" ry="6" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow5)"/><ellipse cx="24" cy="28" rx="10" ry="6" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow5)"/><ellipse cx="24" cy="46" rx="10" ry="6" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow5)"/><line x1="24" y1="16" x2="24" y2="22" stroke="currentColor" stroke-width="2" opacity="0.6"/><line x1="24" y1="34" x2="24" y2="40" stroke="currentColor" stroke-width="2" opacity="0.6"/></svg>',
-
-  // 6. 荊棘玫瑰 🌹
-  '<svg viewBox="0 0 40 56" width="36" height="50"><defs><filter id="glow6"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><line x1="20" y1="56" x2="20" y2="26" stroke="currentColor" stroke-width="2" filter="url(#glow6)"/><path d="M16 32 L20 28Z" fill="currentColor" opacity="0.5"/><path d="M24 36 L20 32Z" fill="currentColor" opacity="0.5"/><circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="1.5" filter="url(#glow6)"/><path d="M20 14C22 10 26 8 26 12C24 16 22 14 20 14Z" fill="none" stroke="currentColor" stroke-width="1"/><path d="M20 14C18 10 14 8 14 12C16 16 18 14 20 14Z" fill="none" stroke="currentColor" stroke-width="1"/><path d="M14 20C12 18 8 18 10 22C14 22 14 20 14 20Z" fill="none" stroke="currentColor" stroke-width="1"/><path d="M26 20C28 18 32 18 30 22C26 22 26 20 26 20Z" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
-
-  // 7. 蜘蛛網 🕸️
-  '<svg viewBox="0 0 56 56" width="50" height="50"><defs><filter id="glow7"><feGaussianBlur stdDeviation="0.7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><line x1="28" y1="0" x2="28" y2="56" stroke="currentColor" stroke-width="0.5" opacity="0.4"/><line x1="0" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="0.5" opacity="0.4"/><line x1="8" y1="8" x2="48" y2="48" stroke="currentColor" stroke-width="0.5" opacity="0.4"/><line x1="48" y1="8" x2="8" y2="48" stroke="currentColor" stroke-width="0.5" opacity="0.4"/><polygon points="28,10 38,20 46,28 38,36 28,46 18,36 10,28 18,20" fill="none" stroke="currentColor" stroke-width="1.2" filter="url(#glow7)"/><polygon points="28,18 34,24 38,28 34,32 28,38 22,32 18,28 22,24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>',
-
-  // 8. 淚滴/血滴 💧
-  '<svg viewBox="0 0 32 48" width="28" height="44"><defs><filter id="glow8"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M16 0C16 0 2 20 2 32C2 40 8 48 16 48C24 48 30 40 30 32C30 20 16 0 16 0Z" fill="none" stroke="currentColor" stroke-width="1.8" filter="url(#glow8)"/></svg>',
-
-  // 9. 弦月 🌙
-  '<svg viewBox="0 0 48 56" width="44" height="52"><defs><filter id="glow9"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M28 4C14 10 6 24 6 38C6 46 10 52 16 54C10 50 4 40 4 28C4 14 14 4 28 4Z" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow9)"/></svg>',
-
-  // 10. 暗黑蝴蝶 🦋
-  '<svg viewBox="0 0 56 48" width="52" height="44"><defs><filter id="glow10"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M28 24C28 24 10 4 4 8C0 12 4 20 12 18C14 20 12 30 16 36C20 30 22 24 28 24Z" fill="none" stroke="currentColor" stroke-width="1.5" filter="url(#glow10)"/><path d="M28 24C28 24 46 4 52 8C56 12 52 20 44 18C42 20 44 30 40 36C36 30 34 24 28 24Z" fill="none" stroke="currentColor" stroke-width="1.5" filter="url(#glow10)"/><circle cx="28" cy="24" r="1" fill="currentColor" opacity="0.7"/></svg>',
-
-  // 11. 骷髏 ☠
-  '<svg viewBox="0 0 44 56" width="40" height="50"><defs><filter id="glow11"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="22" cy="26" r="16" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow11)"/><path d="M8 52C8 36 36 36 36 52" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="30" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="22" r="1.5" fill="currentColor" opacity="0.6"/><circle cx="30" cy="22" r="1.5" fill="currentColor" opacity="0.6"/><path d="M16 32 Q22 36 28 32" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
-
-  // 12. 魔鏡 🪞
-  '<svg viewBox="0 0 36 56" width="32" height="50"><defs><filter id="glow12"><feGaussianBlur stdDeviation="0.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="18" cy="28" rx="14" ry="26" fill="none" stroke="currentColor" stroke-width="2" filter="url(#glow12)"/><ellipse cx="18" cy="28" rx="10" ry="22" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.4"/><line x1="10" y1="20" x2="26" y2="20" stroke="currentColor" stroke-width="0.4" opacity="0.3"/><line x1="10" y1="34" x2="26" y2="34" stroke="currentColor" stroke-width="0.4" opacity="0.3"/></svg>'
-];
-
-const Y2K_ANIMS = ['y2k-rise','y2k-drift','y2k-glitch','y2k-spin-pop','y2k-bounce'];
-
-// --- 哥特色板：軟魅惑粉/紫/紅/銀 ---
-const GOTH_PALETTE = [
-  '#ff006e','#ff4499','#ff88cc',  // 粉系
-  '#b400ff','#cc66ff','#9933ff',  // 紫系
-  '#ff2255','#ff0044','#cc3366',  // 紅系
-  '#e8e8f0','#c0c0e0','#aab8dd',  // 銀/月白
-  '#ff6699','#ff3377'              // 魅惑粉
-];
-
-// 隨機選一個貼圖（50% SVG, 50% emoji）
-function randomStickerContent() {
-  if (Math.random() < 0.5) {
-    // SVG 貼圖
-    var svg = GOTH_SVGS[Math.floor(Math.random() * GOTH_SVGS.length)];
-    var color = GOTH_PALETTE[Math.floor(Math.random() * GOTH_PALETTE.length)];
-    return { html: svg.replace(/currentColor/g, color), isSvg: true };
-  } else {
-    // Emoji 貼圖
-    return { html: GOTH_EMOJIS[Math.floor(Math.random() * GOTH_EMOJIS.length)], isSvg: false };
+// 預渲染一個像素女孩到離屏 canvas
+function preRenderGirl(girlIdx) {
+  var girl = PIXEL_GIRLS[girlIdx];
+  var pal = girl.palette;
+  var oc = document.createElement('canvas');
+  oc.width = PXL_W; oc.height = PXL_H;
+  var octx = oc.getContext('2d');
+  for (var row = 0; row < PXL_H; row++) {
+    var line = girl.data[row];
+    for (var col = 0; col < PXL_W; col++) {
+      var ch = line[col];
+      var color = null;
+      switch (ch) {
+        case '0': continue;
+        case '1': color = pal.skin; break;
+        case '2': color = pal.hair; break;
+        case '3': color = pal.eye; break;
+        case '4': color = pal.blush; break;
+        case '5': color = pal.mouth; break;
+        case '6': color = pal.hairDk; break;
+        case '7': color = pal.eyeW; break;
+        case '8': color = pal.hairLt; break;
+        case '9': color = pal.acc; break;
+        default: continue;
+      }
+      octx.fillStyle = color;
+      octx.fillRect(col, row, 1, 1);
+    }
   }
+  return oc;
 }
 
-function spawnSticker() {
-  var layer = document.getElementById('sticker-layer');
-  if (!layer) return;
+// 初始化並啟動屏保
+function startScreensaver() {
+  if (scrRunning) return;
+  scrCanvas = document.getElementById('screensaver-canvas');
+  if (!scrCanvas) return;
+  scrCtx = scrCanvas.getContext('2d');
+  scrRunning = true;
 
-  var sticker = randomStickerContent();
-  var el = document.createElement(sticker.isSvg ? 'span' : 'span');
-  el.className = 'y2k-sticker';
-  if (sticker.isSvg) {
-    el.innerHTML = sticker.html;
-    el.style.display = 'inline-block';
-  } else {
-    el.textContent = sticker.html;
+  // 預渲染所有女孩
+  for (var g = 0; g < PIXEL_GIRLS.length; g++) {
+    PIXEL_GIRLS[g]._offCanvas = preRenderGirl(g);
   }
 
-  var anim = Y2K_ANIMS[Math.floor(Math.random() * Y2K_ANIMS.length)];
-  var dur = 7 + Math.random() * 16;            // 7–23s
-  var delay = Math.random() * 4;
-  var size = 24 + Math.random() * 40;           // 24–64px
-  var left = -5 + Math.random() * 110;           // can start slightly off-screen
-  var bottom = -15 - Math.random() * 30;
-  var op = 0.25 + Math.random() * 0.45;          // 0.25–0.7
-  var rot = -60 + Math.random() * 120;
-  var dx = -100 + Math.random() * 200;
-
-  // SVG 貼圖加一個旋轉包裝
-  if (sticker.isSvg && Math.random() < 0.4) {
-    el.style.transform = 'rotate(' + (-30 + Math.random() * 60) + 'deg)';
+  // 創建 8 個精靈
+  scrSprites = [];
+  for (var i = 0; i < 8; i++) {
+    scrSprites.push(createSprite());
   }
 
-  el.style.cssText += [
-    'left:' + left + '%',
-    'bottom:' + bottom + 'px',
-    'width:' + size + 'px',
-    'height:' + size + 'px',
-    'font-size:' + (size * 0.8) + 'px',
-    '--op:' + op.toFixed(2),
-    '--rot:' + rot + 'deg',
-    '--dx:' + dx + 'px',
-    '--glow:' + GOTH_PALETTE[Math.floor(Math.random() * GOTH_PALETTE.length)],
-    'animation-name:' + anim,
-    'animation-duration:' + dur + 's',
-    'animation-delay:' + delay + 's',
-    'animation-fill-mode:forwards',
-    'animation-timing-function:ease-in-out'
-  ].join(';');
+  resizeScreensaver();
+  window.addEventListener('resize', resizeScreensaver);
 
-  layer.appendChild(el);
-
-  var totalMs = (delay + dur) * 1000 + 500;
-  setTimeout(function() {
-    if (el.parentNode) el.parentNode.removeChild(el);
-  }, totalMs);
+  // 啟動動畫循環
+  (function animLoop() {
+    if (!scrRunning) return;
+    scrAnimId = requestAnimationFrame(animLoop);
+    updateAndDraw();
+  })();
 }
 
-function seedStickers() {
-  for (var i = 0; i < 15; i++) { spawnSticker(); }
+function stopScreensaver() {
+  scrRunning = false;
+  if (scrAnimId) { cancelAnimationFrame(scrAnimId); scrAnimId = null; }
+  window.removeEventListener('resize', resizeScreensaver);
 }
 
-var stickerTimer = null;
-function startStickers() {
-  seedStickers();
-  stickerTimer = setInterval(function() {
-    spawnSticker();
-  }, 1500 + Math.random() * 3500);
+function resizeScreensaver() {
+  if (!scrCanvas) return;
+  scrCanvas.width = window.innerWidth;
+  scrCanvas.height = window.innerHeight;
 }
-function stopStickers() {
-  if (stickerTimer) { clearInterval(stickerTimer); stickerTimer = null; }
+
+function createSprite() {
+  var girlIdx = Math.floor(Math.random() * PIXEL_GIRLS.length);
+  var w = PXL_W * GIRL_SCALE;
+  var h = PXL_H * GIRL_SCALE;
+  var speed = 0.4 + Math.random() * 1.2; // 慢速漂移，像屏保
+  var angle = Math.random() * Math.PI * 2;
+  var vx = Math.cos(angle) * speed;
+  var vy = Math.sin(angle) * speed;
+  // 確保有最小速度避免卡在邊緣
+  if (Math.abs(vx) < 0.2) vx = (vx >= 0 ? 1 : -1) * 0.2;
+  if (Math.abs(vy) < 0.2) vy = (vy >= 0 ? 1 : -1) * 0.2;
+  return {
+    x: Math.random() * (window.innerWidth - w),
+    y: Math.random() * (window.innerHeight - h),
+    vx: vx, vy: vy,
+    girlIdx: girlIdx,
+    w: w, h: h,
+    opacity: 0.45 + Math.random() * 0.3  // 半透明夢幻感
+  };
+}
+
+function updateAndDraw() {
+  var W = scrCanvas.width, H = scrCanvas.height;
+  scrCtx.clearRect(0, 0, W, H);
+
+  for (var i = 0; i < scrSprites.length; i++) {
+    var s = scrSprites[i];
+
+    // 移動
+    s.x += s.vx;
+    s.y += s.vy;
+
+    // 邊界反彈
+    if (s.x <= 0)       { s.x = 0;       s.vx = -s.vx; }
+    if (s.x >= W - s.w) { s.x = W - s.w; s.vx = -s.vx; }
+    if (s.y <= 0)       { s.y = 0;       s.vy = -s.vy; }
+    if (s.y >= H - s.h) { s.y = H - s.h; s.vy = -s.vy; }
+
+    // 輕微隨機擾動，避免完全直線軌跡太單調
+    if (Math.random() < 0.005) {
+      s.vx += (Math.random() - 0.5) * 0.08;
+      s.vy += (Math.random() - 0.5) * 0.08;
+      // 限制最大速度
+      var spd = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+      if (spd > 2.0) { s.vx = s.vx / spd * 2.0; s.vy = s.vy / spd * 2.0; }
+      if (spd < 0.15) { s.vx = s.vx / spd * 0.15; s.vy = s.vy / spd * 0.15; }
+    }
+
+    // 繪製（帶透明度，輕微發光）
+    scrCtx.save();
+    scrCtx.globalAlpha = s.opacity;
+    scrCtx.imageSmoothingEnabled = false;
+    // 微光陰影
+    scrCtx.shadowColor = 'rgba(255,180,200,0.35)';
+    scrCtx.shadowBlur = 12;
+    scrCtx.drawImage(PIXEL_GIRLS[s.girlIdx]._offCanvas, Math.round(s.x), Math.round(s.y), s.w, s.h);
+    scrCtx.restore();
+  }
 }
 
 // ============================================================================
-//  Web Audio 音效引擎 — 女高「嗯」按鍵反饋
+//  Web Audio 音效引擎 — 嬌滴滴喘息聲
+//  靈感：高音域短促氣息，升調→降調，氣音為主
 // ============================================================================
 var audioCtx = null;
 
@@ -2632,71 +2612,89 @@ function initAudio() {
 
 function playClickSound() {
   if (!audioCtx) return;
-  // 確保 AudioContext 在 running 狀態（瀏覽器自動播放政策）
   if (audioCtx.state === 'suspended') { audioCtx.resume(); }
 
   var now = audioCtx.currentTime;
-  var dur = 0.18;  // 總時長 180ms
+  var dur = 0.13; // 130ms，短促喘息
 
-  // --- 主音色：正弦波基頻，模擬女聲音高 ---
+  // === 主音：高頻正弦波，模擬嬌聲基頻 ===
+  // 先快速升調（吸氣感）再降調（呼氣感）
   var osc1 = audioCtx.createOscillator();
   var gain1 = audioCtx.createGain();
   osc1.type = 'sine';
-  osc1.frequency.setValueAtTime(560, now);               // F5 附近
-  osc1.frequency.linearRampToValueAtTime(500, now + 0.06); // 微降
-  osc1.frequency.linearRampToValueAtTime(530, now + dur);
+  osc1.frequency.setValueAtTime(680, now);                       // 起始 D#5
+  osc1.frequency.linearRampToValueAtTime(920, now + 0.025);       // 快速升到 A#5（嬌嗔上升）
+  osc1.frequency.linearRampToValueAtTime(720, now + 0.08);        // 回落
+  osc1.frequency.linearRampToValueAtTime(560, now + dur);         // 尾音下沉
   gain1.gain.setValueAtTime(0, now);
-  gain1.gain.linearRampToValueAtTime(0.18, now + 0.015);   // 快速 attack
-  gain1.gain.setValueAtTime(0.15, now + 0.04);
-  gain1.gain.linearRampToValueAtTime(0, now + dur);        // decay
+  gain1.gain.linearRampToValueAtTime(0.08, now + 0.012);          // 柔和的 attack
+  gain1.gain.setValueAtTime(0.06, now + 0.05);
+  gain1.gain.linearRampToValueAtTime(0, now + dur);
   osc1.connect(gain1);
   gain1.connect(audioCtx.destination);
   osc1.start(now);
   osc1.stop(now + dur);
 
-  // --- 諧波層：三角形波，模擬鼻音泛音 ---
+  // === 泛音層：輕微三角波豐富音色 ===
   var osc2 = audioCtx.createOscillator();
   var gain2 = audioCtx.createGain();
   osc2.type = 'triangle';
-  osc2.frequency.setValueAtTime(1120, now);              // 2 倍頻
-  osc2.frequency.linearRampToValueAtTime(1060, now + 0.05);
+  osc2.frequency.setValueAtTime(1400, now);
+  osc2.frequency.linearRampToValueAtTime(1800, now + 0.02);
   osc2.frequency.linearRampToValueAtTime(1100, now + dur);
   gain2.gain.setValueAtTime(0, now);
-  gain2.gain.linearRampToValueAtTime(0.06, now + 0.01);
+  gain2.gain.linearRampToValueAtTime(0.025, now + 0.008);
   gain2.gain.linearRampToValueAtTime(0, now + dur);
   osc2.connect(gain2);
   gain2.connect(audioCtx.destination);
   osc2.start(now);
   osc2.stop(now + dur);
 
-  // --- 氣音層：低通噪聲，模擬「嗯」的鼻腔共鳴 ---
-  var bufferSize = Math.floor(audioCtx.sampleRate * dur);
-  var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  var data = noiseBuffer.getChannelData(0);
-  for (var i = 0; i < bufferSize; i++) {
-    data[i] = (Math.random() * 2 - 1) * 0.08;
+  // === 氣音層：帶通濾波噪聲，模擬嬌喘氣流 ===
+  var noiseDur = dur;
+  var bufSize = Math.floor(audioCtx.sampleRate * noiseDur);
+  var noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+  var ndata = noiseBuf.getChannelData(0);
+  for (var i = 0; i < bufSize; i++) {
+    ndata[i] = (Math.random() * 2 - 1) * 0.12;
   }
-  var noise = audioCtx.createBufferSource();
-  noise.buffer = noiseBuffer;
-  var noiseFilter = audioCtx.createBiquadFilter();
-  noiseFilter.type = 'lowpass';
-  noiseFilter.frequency.setValueAtTime(800, now);
-  noiseFilter.Q.setValueAtTime(2, now);
+  var noiseSrc = audioCtx.createBufferSource();
+  noiseSrc.buffer = noiseBuf;
+  var bpFilter = audioCtx.createBiquadFilter();
+  bpFilter.type = 'bandpass';
+  bpFilter.frequency.setValueAtTime(1200, now);                   // 高頻氣音
+  bpFilter.frequency.linearRampToValueAtTime(1600, now + 0.02);
+  bpFilter.frequency.linearRampToValueAtTime(800, now + dur);
+  bpFilter.Q.setValueAtTime(1.5, now);
   var noiseGain = audioCtx.createGain();
   noiseGain.gain.setValueAtTime(0, now);
-  noiseGain.gain.linearRampToValueAtTime(0.04, now + 0.005);
-  noiseGain.gain.linearRampToValueAtTime(0, now + 0.1);
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
+  noiseGain.gain.linearRampToValueAtTime(0.1, now + 0.006);       // 氣音比主音更突出
+  noiseGain.gain.linearRampToValueAtTime(0.06, now + 0.04);
+  noiseGain.gain.linearRampToValueAtTime(0, now + 0.09);
+  noiseSrc.connect(bpFilter);
+  bpFilter.connect(noiseGain);
   noiseGain.connect(audioCtx.destination);
-  noise.start(now);
-  noise.stop(now + dur);
+  noiseSrc.start(now);
+  noiseSrc.stop(now + noiseDur);
+
+  // === 輕微延遲混響（模擬嬌聲餘韻）===
+  var delayNode = audioCtx.createDelay(0.04);
+  delayNode.delayTime.setValueAtTime(0.035, now);
+  var fbGain = audioCtx.createGain();
+  fbGain.gain.setValueAtTime(0.15, now);
+  var wetGain = audioCtx.createGain();
+  wetGain.gain.setValueAtTime(0.03, now);
+  wetGain.gain.linearRampToValueAtTime(0, now + 0.25);
+  gain1.connect(delayNode);
+  delayNode.connect(fbGain);
+  fbGain.connect(delayNode);
+  delayNode.connect(wetGain);
+  wetGain.connect(audioCtx.destination);
 }
 
 // ============================================================================
 //  初始化
 // ============================================================================
-// 首次用戶交互時初始化 AudioContext（瀏覽器自動播放政策）
 document.addEventListener('click', function initAudioOnce() {
   initAudio();
 }, { once: true });
@@ -2704,7 +2702,7 @@ document.addEventListener('keydown', function initAudioOnceKb() {
   initAudio();
 }, { once: true });
 
-startStickers();
+startScreensaver();
 updateHomeDeckUI();
 </script>
 
